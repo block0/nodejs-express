@@ -31,17 +31,18 @@ router.get('/', function(req, res, next) {
     //res.append('Last-Modified', 'Sat, 02 Sep 2017 16:00:00 GMT');
 
     res.json(users);
-
-    cb();
   };
 
   memcached.get('api_get_users', function (err, data) {
-    if (typeof !=== 'undefined')
+    if (typeof data !== 'undefined') {
+      console.log('use memory cache');
       return response(data);
+    }
 
     db.find({}, function(err, users) {
-      response(users , function() {
-        memcached.set('api_get_users', users);        
+      console.log('use database');
+      memcached.set('api_get_users', users, 86400, function(err) {
+        response(users);
       });
     });    
   });
