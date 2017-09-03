@@ -21,8 +21,15 @@ DELETE http://192.168.1.100:6000//users/123456
 
 var request = require('superagent');
 
+function performanceNow() {
+	var hr = process.hrtime();                                                            
+	return hr[0] * 1e9 + hr[1];
+}
+
+var start = performanceNow();
+
 request
-  .post('http://localhost:3000/users')
+  .post('http://localhost:5000/users')
   .set('Accept', 'application/json')  
   .send({
     Name:     'TEST_somebody',
@@ -31,17 +38,14 @@ request
     Address:  'Taipei',
     Age:      20
   })
-  .end(function(err, res){
-  	if (typeof res !== 'undefined') 
-  		return console.log('ok');
+  .end(function(err, res) {
+  	var end = performanceNow();
+
+  	if (typeof res !== 'undefined')
+  		return console.log({
+  			status: 'ok',
+  			ns: end - start  // nanoseconds
+  		});
 
   	return console.log('failed');
   });
-
-
-
-
-
-
-
-

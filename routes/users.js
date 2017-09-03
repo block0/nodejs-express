@@ -35,12 +35,10 @@ router.get('/', function(req, res, next) {
 
   memcached.get('api_get_users', function (err, data) {
     if (typeof data !== 'undefined') {
-      console.log('use memory cache');
       return response(data);
     }
 
     db.find({}, function(err, users) {
-      console.log('use database');
       memcached.set('api_get_users', users, 86400, function(err) {
         response(users);
       });

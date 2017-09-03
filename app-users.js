@@ -16,6 +16,7 @@ var FACEBOOK_APP_SECRET = 'a1c36c47b495e45ec3e5282906a993c6';
 
 // Main app
 var users = require('./routes/users');
+var posts = require('./routes/posts');
 
 var app = express();
 
@@ -49,7 +50,7 @@ app.use(function(req, res, next) {
   db.once('open', function callback () {
     console.log('MongoDB: connected.');
 
-    // MongoDB schema
+    // User system schema
     var userSchema = mongoose.Schema({
         Name: String,
         Phone: String,
@@ -65,9 +66,18 @@ app.use(function(req, res, next) {
         }
     });
 
+    // Blog system schema
+    var postSchema = mongoose.Schema({
+        Title: { type: String, default: 'No title' },
+        Content: { type: String, default: 'No content' },
+        UserId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        TimeCreated: { type: Date, default: Date.now }
+    });
+
     app.db = {
       model: {
-        User: mongoose.model('User', userSchema)
+        User: mongoose.model('User', userSchema),
+        Post: mongoose.model('Post', postSchema)        
       }
     };
 
@@ -129,6 +139,8 @@ app.get('/users', require('connect-ensure-login').ensureLoggedIn({
   setReturnTo: '/users', 
   redirectTo: '/login'
 }));
+
+app.use('/', posts);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
