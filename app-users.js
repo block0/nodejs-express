@@ -68,8 +68,8 @@ app.use(function(req, res, next) {
 
     // Blog system schema
     var postSchema = mongoose.Schema({
-        Title: { type: String, default: 'No title' },
-        Content: { type: String, default: 'No content' },
+        title: { type: String, default: 'No title' },
+        content: { type: String, default: 'No content' },
         UserId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         TimeCreated: { type: Date, default: Date.now }
     });
